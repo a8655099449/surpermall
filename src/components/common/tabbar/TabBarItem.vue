@@ -24,7 +24,6 @@ export default {
   },
   methods: {
     changePath(){
-      console.log(this.textColor);
       if (this.$route.path!=this.path) {
         this.$router.push(this.path)
       }
