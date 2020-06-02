@@ -1,6 +1,6 @@
 <template>
   <div>
-    <router-view></router-view>
+   
 
     <tab-bar>
       <tab-bar-item textColor='#ff5777' path="/home"> 

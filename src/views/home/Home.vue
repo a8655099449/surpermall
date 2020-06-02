@@ -5,25 +5,34 @@
         首页
       </div>
     </nav-bar>
+
+     <tab-contrl class="home-tab-contrl"
+                  :titles="['热卖','新品','精选']"
+                  @changeIndex="changeIndex" 
+                  v-show="isFixed"
+                  ref="contrl2"  
+                  />
     <scroll class="content"
             ref='scroll'
             :probe="3"
             @scroll="scrollChange"
             :pullUpload='true'
-            @pullingUp='loadGoods' 
+            @pullingUp='loadGoods'>
 
-            >
-
-      <home-swiper :banners="banners"></home-swiper>
+      <home-swiper 
+      :banners="banners"
+      @swiperImgLoad="swiperImgLoad"
+      />
       <recommend-view :recommends="recommends" />
       <feature-view />
-      <tab-contri class="home-tab-contri"
-                  :titles="['热卖','新品','精选']"
-                  @changeIndex="changeIndex" />
+      <tab-contrl :titles="['热卖','新品','精选']"
+                  @changeIndex="changeIndex" ref="contrl1" />
+
       <goods :goodsList="goods[nowGoods].list" />
 
     </scroll>
-    <back-top @click.native="backTop" v-show="backTopShow" />
+    <back-top @click.native="backTop"
+              v-show="backTopShow" />
   </div>
 
 </template>
@@ -36,7 +45,7 @@ import FeatureView from './childComps/FeatureView'
 
 import NavBar from 'components/common/navbar/NavBar'
 import Scroll from 'components/common/scroll/Scroll'
-import TabContri from 'components/content/TabContri'
+import TabContrl from 'components/content/TabContrl'
 import Goods from 'components/content/Goods'
 import BackTop from 'components/content/backtop/BackTop'
 
@@ -55,7 +64,9 @@ export default {
         sell: { page: 0, list: [] }
       },
       nowGoods: 'pop',
-      backTopShow: false
+      backTopShow: false,
+      isFixed:false,
+      offsetTop:0
     }
   },
   components: {
@@ -63,7 +74,7 @@ export default {
     HomeSwiper,
     RecommendView,
     FeatureView,
-    TabContri,
+    TabContrl,
     Goods,
     Scroll,
     BackTop
@@ -92,6 +103,9 @@ export default {
           this.nowGoods = 'pop'
           break
       }
+      this.$refs.contrl1.activeIndex=item
+      this.$refs.contrl2.activeIndex=item
+
     },
     backTop() {
       console.log('backTop')
@@ -99,9 +113,14 @@ export default {
     },
     scrollChange(position) {
       this.backTopShow = position.y < -1000 ? true : false
-    },
+      this.isFixed = position.y < -this.offsetTop ? true : false
 
-    loadGoods(){
+
+    },
+    swiperImgLoad(){
+      this.offsetTop=this.$refs.contrl1.$el.offsetTop
+    },
+    loadGoods() {
       this.getHomeGoods(this.nowGoods)
     },
     /**
@@ -114,7 +133,11 @@ export default {
         this.goods[type].list.push(...res.data.list)
         this.goods[type].page++
         this.$refs.scroll.finishPullUp()
-        this.$refs.scroll.refresh()
+        // console.log(this.$bus);
+        const refresh = this.debounce(this.$refs.scroll.refresh,100)
+        this.$bus.$on('goodsImgLord', () => {
+          refresh()
+        })
       })
     },
     getHomeMultiData() {
@@ -122,6 +145,21 @@ export default {
         this.banners = res.data.banner.list
         this.recommends = res.data.recommend.list
       })
+    },
+
+    /**
+     * 防抖函数
+     */
+
+    debounce(fn, delay) {
+      let timer = null
+      return function(...args) {
+        if (timer) clearTimeout(timer)
+        timer = setTimeout(() => {
+          fn.apply(this,args)
+        }, delay);
+
+      }
     }
   }
 }
@@ -134,13 +172,12 @@ export default {
   font-size: 18px;
 }
 #home {
-  padding-top: 44px;
+  /* padding-top: 44px; */
   height: 100vh;
   /* position: relative; */
 }
-.home-tab-contri {
-  position: sticky;
-  top: 44px;
+.home-tab-contrl {
+  position: relative;
   z-index: 9;
 }
 .content {

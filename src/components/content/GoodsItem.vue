@@ -1,7 +1,7 @@
 <template>
   <div class="goods-item">
     <!-- <div> -->
-      <img :src="goods.show.img">
+      <img :src="goods.show.img" @load="goodsImgLord">
       <div class="goods-info">
         <p class="text_row_1"> {{goods.title}} </p>
         <p class="price_box"><span class="price"> {{goods.price}} </span><span class="cfav"> {{goods.cfav}} </span> </p>
@@ -21,7 +21,12 @@ export default {
         return {}
       }
     }
-  }
+  },
+  methods: {
+    goodsImgLord(){
+      this.$bus.$emit('goodsImgLord')
+    }
+  },
 }
 </script>
 
@@ -29,7 +34,7 @@ export default {
 .goods-item {
   width: 48%;
   padding-bottom: 48px;
-  height: 310px;
+  /* height: 310px; */
   position: relative;
 }
 .goods-info {
@@ -44,7 +49,7 @@ export default {
 }
 .goods-item img {
   width: 100%;
-  height:100%;
+  /* height:100%; */
   border-radius: 3px;
 }
 .price_box {

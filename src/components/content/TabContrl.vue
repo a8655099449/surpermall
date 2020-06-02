@@ -1,8 +1,8 @@
 <template>
-  <div class="tab-contri">
-    <div class="tab-contri-item" v-for="(item, index) in titles" :key="index" 
+  <div class="tab-contrl" >
+    <div class="tab-contrl-item" v-for="(item, index) in titles" :key="index" 
     :class="{'active':index===activeIndex}" 
-    @click="changeAcive(index)">
+    @click="changeAcive(index)" >
 
       <span>{{item}}</span>
     </div>
@@ -11,7 +11,7 @@
 
 <script>
 export default {
-  name:'TabContri',
+  name:'TabContrl',
   data() {
     return {
       activeIndex:0
@@ -35,20 +35,20 @@ export default {
 </script>
 
 <style>
-  .tab-contri{
+  .tab-contrl{
     display: flex;
     height: 40px;
     line-height: 40px;
     text-align: center;
     background-color: #fff;
   }
-  .tab-contri-item{
+  .tab-contrl-item{
     flex:1;
   }
-  .tab-contri-item span{
+  .tab-contrl-item span{
     padding: 5px;
   }
-  .tab-contri .active span{
+  .tab-contrl .active span{
     color: var(--color-tint);
     border-bottom: 3px solid var(--color-tint);
   }
