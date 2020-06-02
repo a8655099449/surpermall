@@ -66,7 +66,8 @@ export default {
       nowGoods: 'pop',
       backTopShow: false,
       isFixed:false,
-      offsetTop:0
+      offsetTop:0,
+      saveY:-1000
     }
   },
   components: {
@@ -108,7 +109,6 @@ export default {
 
     },
     backTop() {
-      console.log('backTop')
       this.$refs.scroll.backTo(0, 0)
     },
     scrollChange(position) {
@@ -161,7 +161,17 @@ export default {
 
       }
     }
+  },
+  activated() {
+    this.$refs.scroll.refresh()
+    this.$refs.scroll.scroll.scrollTo(0,this.saveY,0)
+  },
+  deactivated() {
+    // console.log(this.$refs.scroll.);
+    this.saveY=this.$refs.scroll.scroll.y
+    
   }
+
 }
 </script>
 
