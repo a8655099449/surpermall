@@ -8,7 +8,7 @@
       <div slot="center" class="navBar">
           <div v-for="(item, index) in titles" :key="index"
             :class="{'action':actionIndex === index}"
-            @click="actionIndex = index"
+            @click="itemClick(index)"
           >
             {{item}}
           </div>
@@ -35,6 +35,11 @@ export default {
   methods: {
     back(){
       this.$router.back()
+    },
+    itemClick(i){
+      // console.log(i);
+      this.actionIndex = i
+      this.$emit('navChange',i)
     }
   },
 }

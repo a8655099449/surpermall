@@ -41,6 +41,7 @@ export default {
     line-height: 40px;
     text-align: center;
     background-color: #fff;
+    font-size: 18px;
   }
   .tab-contrl-item{
     flex:1;

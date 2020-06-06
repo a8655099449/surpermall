@@ -1,7 +1,9 @@
 <template>
   <div id="home">
+    <router-view></router-view>
     <nav-bar class="navBar-home">
       <div slot="center">
+        
         首页
       </div>
     </nav-bar>
@@ -47,10 +49,13 @@ import NavBar from 'components/common/navbar/NavBar'
 import Scroll from 'components/common/scroll/Scroll'
 import TabContrl from 'components/content/TabContrl'
 import Goods from 'components/content/Goods'
-import BackTop from 'components/content/backtop/BackTop'
+
+// import BackTop from 'components/content/backtop/BackTop'
 
 // 引入网络请求模块
 import { getHomeMultiData, getHomeGoods } from 'network/home'
+
+import  {backTop} from 'common/mixin'
 
 export default {
   name: 'Home',
@@ -64,10 +69,11 @@ export default {
         sell: { page: 0, list: [] }
       },
       nowGoods: 'pop',
-      backTopShow: false,
+      // backTopShow: false,
       isFixed:false,
       offsetTop:0,
-      saveY:-1000
+      saveY:0,
+      itemListener:null  
     }
   },
   components: {
@@ -78,7 +84,7 @@ export default {
     TabContrl,
     Goods,
     Scroll,
-    BackTop
+    // BackTop
   },
   created() {
     this.getHomeMultiData()
@@ -108,11 +114,11 @@ export default {
       this.$refs.contrl2.activeIndex=item
 
     },
-    backTop() {
-      this.$refs.scroll.backTo(0, 0)
-    },
+    // backTop() {
+    //   this.$refs.scroll.backTo(0, 0)
+    // },
     scrollChange(position) {
-      this.backTopShow = position.y < -1000 ? true : false
+      this.isBackToShow(position.y)
       this.isFixed = position.y < -this.offsetTop ? true : false
 
 
@@ -133,11 +139,11 @@ export default {
         this.goods[type].list.push(...res.data.list)
         this.goods[type].page++
         this.$refs.scroll.finishPullUp()
-        // console.log(this.$bus);
-        const refresh = this.debounce(this.$refs.scroll.refresh,100)
-        this.$bus.$on('goodsImgLord', () => {
-          refresh()
-        })
+    
+        this.itemListener = this.debounce(this.$refs.scroll.refresh,100)
+        // this.itemListener = () => refresh()
+        // 开启监听
+        this.$bus.$on('goodsImgLord',this.itemListener)
       })
     },
     getHomeMultiData() {
@@ -168,9 +174,13 @@ export default {
   },
   deactivated() {
     // console.log(this.$refs.scroll.);
+
+    // 离开的使用记录位置
     this.saveY=this.$refs.scroll.scroll.y
-    
-  }
+    // 离开的时候关闭图片的监听
+    this.$bus.$off('goodsImgLord',this.itemListener)
+  },
+  mixins:[backTop]
 
 }
 </script>

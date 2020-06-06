@@ -1,8 +1,8 @@
 <template>
   <div class="goods-item" @click="goDetail">
     <!-- <div> -->
-      <img :src="goods.show.img" @load="goodsImgLord">
-      <div class="goods-info">
+      <img v-lazy="imgs" @load="goodsImgLord">
+      <div class="goods-item-info">
         <p class="text_row_1"> {{goods.title}} </p>
         <p class="price_box"><span class="price"> {{goods.price}} </span><span class="cfav"> {{goods.cfav}} </span> </p>
       </div>
@@ -31,17 +31,25 @@ export default {
       this.$router.push('/detail'+this.goods.iid)
     }
   },
+  computed:{
+    imgs(){
+      
+      // return this.goods.show.img || this.goods.image
+      // return this.goods.image || this.goods.show.img
+      return this.goods.image ?   this.goods.image : this.goods.show.img 
+    }
+  }
 }
 </script>
 
-<style>
+<style >
 .goods-item {
   width: 48%;
   padding-bottom: 48px;
   /* height: 310px; */
   position: relative;
 }
-.goods-info {
+.goods-item-info {
   font-size: 12px;
   position: absolute;
   bottom: 5px;

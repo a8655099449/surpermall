@@ -62,6 +62,7 @@ export default {
 .bar-item {
   flex: 1;
   text-align: center;
+  font-size: 16px;
 }
 .bar-item .action_icon{
   display: none;
